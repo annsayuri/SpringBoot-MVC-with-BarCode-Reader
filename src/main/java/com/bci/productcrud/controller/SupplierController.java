@@ -3,58 +3,54 @@ package com.bci.productcrud.controller;
 import com.bci.productcrud.model.Supplier;
 import com.bci.productcrud.service.SupplierService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/suppliers")
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/suppliers")
+@RequiredArgsConstructor
 public class SupplierController {
 
     private final SupplierService supplierService;
 
-    @Autowired
-    public SupplierController(SupplierService supplierService) {
-        this.supplierService = supplierService;
+    @PostMapping
+    public ResponseEntity<Supplier> create(@Valid @RequestBody Supplier supplier) {
+        Supplier created = supplierService.saveSupplier(supplier);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    // Suppliers ලැයිස්තුව පෙන්වීම
     @GetMapping
-    public String listSuppliers(Model model) {
-        model.addAttribute("suppliers", supplierService.getAllSuppliers());
-        return "suppliers/list";
+    public List<Supplier> findAll() {
+        return supplierService.getAllSuppliers();
     }
 
-    // අලුත් Supplier කෙනෙක් එකතු කිරීමට Form එක පෙන්වීම
-    @GetMapping("/new")
-    public String createSupplierForm(Model model) {
-        model.addAttribute("supplier", new Supplier());
-        return "suppliers/form";
+    @GetMapping("/{id}")
+    public ResponseEntity<Supplier> findById(@PathVariable Long id) {
+        return supplierService.getSupplierById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // Supplier ව Save කිරීම
-    @PostMapping("/save")
-    public String saveSupplier(@Valid @ModelAttribute("supplier") Supplier supplier, BindingResult result) {
-        if (result.hasErrors()) {
-            return "suppliers/form";
+    @PutMapping("/{id}")
+    public ResponseEntity<Supplier> update(@PathVariable Long id, @Valid @RequestBody Supplier supplier) {
+        return supplierService.getSupplierById(id)
+                .map(existing -> {
+                    supplier.setId(id);
+                    return ResponseEntity.ok(supplierService.saveSupplier(supplier));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (supplierService.getSupplierById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
-        supplierService.saveSupplier(supplier);
-        return "redirect:/suppliers";
-    }
-
-    // Edit Form එක පෙන්වීම
-    @GetMapping("/edit/{id}")
-    public String editSupplierForm(@PathVariable Long id, Model model) {
-        supplierService.getSupplierById(id).ifPresent(supplier -> model.addAttribute("supplier", supplier));
-        return "suppliers/form";
-    }
-
-    // Supplier කෙනෙක් Delete කිරීම
-    @GetMapping("/delete/{id}")
-    public String deleteSupplier(@PathVariable Long id) {
         supplierService.deleteSupplier(id);
-        return "redirect:/suppliers";
+        return ResponseEntity.noContent().build();
     }
 }
