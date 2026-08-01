@@ -1,6 +1,6 @@
 # Product CRUD — Spring MVC Demo
 
-A minimal Spring Boot app demonstrating classic **Controller → Service → Repository** MVC layering, backed by Supabase (Postgres). One resource (`Product`), full CRUD, plus a barcode-scanner-friendly search endpoint.
+A minimal Spring Boot app demonstrating classic **Controller → Service → Repository** MVC layering, backed by Supabase (Postgres). `Product` and `Supplier resources`, full CRUD, plus a barcode-scanner-friendly search endpoint.
 
 ```
 [Browser page + USB scanner]
@@ -60,8 +60,8 @@ You should see the Maven version and the Java version it's using (should match s
 ## 2. Clone and set up the project
 
 ```powershell
-git clone https://github.com/Thamel777/Spring-MVC.git
-cd Spring-MVC
+git clone https://github.com/annsayuri/SpringBoot-MVC-with-BarCode-Reader.git
+cd SpringBoot-MVC-with-BarCode-Reader
 ```
 
 The database credentials are **not** stored in the repo — they're read from environment variables at startup (see [application.properties](src/main/resources/application.properties)). Set them in your terminal session before running the app:
@@ -72,7 +72,7 @@ $env:SUPABASE_DB_USERNAME="postgres.<project-ref>"
 $env:SUPABASE_DB_PASSWORD="<your-db-password>"
 ```
 
-Replace `<region>`, `<project-ref>`, and `<your-db-password>` with the values from your Supabase **Connect** dialog. These `$env:` variables only last for the current terminal session — you'll need to re-set them if you open a new window (or set them permanently via System Properties → Environment Variables).
+Replace `<region>`, `<project-ref>`, and `<your-db-password>` with the values from your Supabase Connect dialog. These $env: variables only last for the current terminal session — you'll need to re-set them if you open a new window (or set them permanently via System Properties → Environment Variables).
 
 ## 3. Run it
 
@@ -80,37 +80,69 @@ Replace `<region>`, `<project-ref>`, and `<your-db-password>` with the values fr
 mvn spring-boot:run
 ```
 
-On first run, Hibernate auto-creates the `products` table in your Supabase database (`spring.jpa.hibernate.ddl-auto=update`). Once you see `Started ProductCrudApplication`, open:
+Once started, open your browser:
 
-```
-http://localhost:8081
-```
+ - Main Web App: `http://localhost:8081`
+ - Suppliers Management: `http://localhost:8081/suppliers`
+
 
 You'll see a page with a barcode-scan input, an add/edit form, and a product table. A USB barcode scanner behaves like a keyboard (types the code, then presses Enter), so clicking into the scan field and scanning "just works."
 
 ## 4. API endpoints
 
+### 📦 Product Endpoints
 | Method | Path | Description |
 |---|---|---|
 | POST | `/api/products` | Create a product |
 | GET | `/api/products` | List all products |
-| GET | `/api/products/{id}` | Get a product by id |
-| GET | `/api/products/barcode/{barcode}` | Get a product by barcode (used by the scanner) |
-| PUT | `/api/products/{id}` | Update a product |
-| DELETE | `/api/products/{id}` | Delete a product |
+| GET | `/api/products/{id}` | Get product by ID |
+| GET | `/api/products/barcode/{barcode}` | Get product by barcode (used by scanner) |
+| PUT | `/api/products/{id}` | Update product |
+| DELETE | `/api/products/{id}` | Delete product |
+
+### 🏬 Supplier Endpoints (UI Routes)
+| Method | Path | Description |
+|---|---|---|
+| GET | `/suppliers` | View all suppliers list |
+| GET | `/suppliers/new` | Render form to create a new supplier |
+| POST | `/suppliers/save` | Save/Update supplier details |
+| GET | `/suppliers/edit/{id}` | Render form to edit an existing supplier |
+| GET | `/suppliers/delete/{id}` | Delete a supplier by ID |
 
 ## 5. Project structure
 
 ```
 src/main/java/com/bci/productcrud/
-  controller/   -> @RestController - HTTP in, HTTP out, no business logic
-  service/      -> business rules (e.g. "barcode must be unique")
-  repository/   -> JpaRepository interfaces - DB access, no SQL written by hand
-  model/        -> Product entity (JPA-mapped domain object)
-  exception/    -> centralized error handling (@RestControllerAdvice)
+├── controller/
+│   ├── ProductController.java       -> Handles Product HTTP routes & API endpoints
+│   └── SupplierController.java      -> Handles Supplier CRUD routes and views
+├── exception/
+│   ├── DuplicateBarcodeException.java
+│   ├── GlobalExceptionHandler.java  -> Centralized error handling (@RestControllerAdvice)
+│   └── ProductNotFoundException.java
+├── model/
+│   ├── Product.java                 -> Product JPA Entity (Relationship with Supplier)
+│   └── Supplier.java                -> Supplier JPA Entity
+├── repository/
+│   ├── ProductRepository.java       -> JpaRepository interface for Product
+│   └── SupplierRepository.java      -> JpaRepository interface for Supplier
+├── service/
+│   ├── ProductService.java          -> Product service interface
+│   ├── ProductServiceImpl.java      -> Product business logic implementation
+│   ├── SupplierService.java         -> Supplier service interface
+│   └── SupplierServiceImpl.java     -> Supplier business logic implementation
+└── ProductCrudApplication.java      -> Spring Boot main entry point
+
 src/main/resources/
-  application.properties -> config (DB connection, port, JPA settings)
-  static/                -> the frontend: index.html + app.js + style.css
+├── application.properties           -> Configuration (DB properties, port 8081)
+├── static/                          -> Frontend assets
+│   ├── app.js                       -> Barcode scanner & JS logic
+│   ├── index.html                   -> Single-page web UI
+│   └── style.css                    -> CSS styling
+└── templates/                       -> Thymeleaf UI templates
+    └── suppliers/
+        ├── form.html                -> Add/Edit Supplier form
+        └── list.html                -> Supplier list view          
 ```
 
 Request flow for a barcode scan: `app.js` → `GET /api/products/barcode/{code}` → `ProductController` → `ProductService` → `ProductRepository` → Supabase, and the `Product` JSON flows back the same path in reverse.
