@@ -11,24 +11,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class GRNServiceImpl implements GRNService {
 
-    private final GRNRepository grnRepository;
-    private final ProductRepository productRepository;
-    private final PurchaseOrderRepository poRepository;
+    @Autowired
+    private GRNRepository grnRepository;
 
     @Autowired
-    public GRNServiceImpl(GRNRepository grnRepository, 
-                          ProductRepository productRepository, 
-                          PurchaseOrderRepository poRepository) {
-        this.grnRepository = grnRepository;
-        this.productRepository = productRepository;
-        this.poRepository = poRepository;
-    }
+    private ProductRepository productRepository;
+
+    @Autowired
+    private PurchaseOrderRepository poRepository;
 
     @Override
     public List<GRN> getAllGRNs() {
@@ -50,23 +47,28 @@ public class GRNServiceImpl implements GRNService {
         if (grn.getItems() != null) {
             for (GRNItem item : grn.getItems()) {
                 item.setGrn(grn);
-                double itemTotal = item.getReceivedQuantity() * item.getUnitPrice();
-                item.setTotalPrice(itemTotal);
+                
+                // BigDecimal Price / Quantity Handling
+                double price = item.getUnitPrice() != null ? item.getUnitPrice().doubleValue() : 0.0;
+                int qty = item.getQuantity() != null ? item.getQuantity() : 0;
+                
+                double itemTotal = price * qty;
+                item.setTotalPrice(BigDecimal.valueOf(itemTotal)); // 👈 Fix 1
                 totalAmount += itemTotal;
 
-                // 🚀 Stock Auto-Update Logic:
-                // GRN එකක් ලැබුණු පසු Product එකේ Quantity එක වැඩි කිරීම
+                // 🚀 Stock Auto-Update Logic
                 Product product = productRepository.findById(item.getProduct().getId())
                         .orElseThrow(() -> new RuntimeException("Product not found"));
-                
+
                 int currentQty = product.getQuantity() != null ? product.getQuantity() : 0;
-                product.setQuantity(currentQty + item.getReceivedQuantity());
+                product.setQuantity(currentQty + qty); // 👈 Fix 2
                 productRepository.save(product);
             }
         }
+
         grn.setTotalAmount(totalAmount);
 
-        // PO status එක "RECEIVED" ලෙස update කිරීම (PO එකක් තිබේ නම් පමණක්)
+        // PO status update to RECEIVED
         if (grn.getPurchaseOrder() != null && grn.getPurchaseOrder().getId() != null) {
             PurchaseOrder po = poRepository.findById(grn.getPurchaseOrder().getId()).orElse(null);
             if (po != null) {
