@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Purchase Orders List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>📋 Purchase Orders (PO)</h2>
+        <a href="/po/new" class="btn btn-primary">+ Create New PO</a>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>PO Number</th>
+                <th>Supplier</th>
+                <th>Order Date</th>
+                <th>Status</th>
+                <th>Total Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="po : ${purchaseOrders}">
+                <td th:text="${po.id}"></td>
+                <td th:text="${po.poNumber}"></td>
+                <td th:text="${po.supplier != null ? po.supplier.name : 'N/A'}"></td>
+                <td th:text="${po.orderDate}"></td>
+                <td>
+                    <span class="badge bg-warning text-dark" th:if="${po.status == 'PENDING'}" th:text="${po.status}"></span>
+                    <span class="badge bg-success" th:if="${po.status == 'RECEIVED'}" th:text="${po.status}"></span>
+                </td>
+                <td th:text="${po.totalAmount}"></td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+</body>
+</html>
