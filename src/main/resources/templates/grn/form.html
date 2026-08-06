@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Create GRN</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+</head>
+<body class="container mt-4">
+    <h2>📦 Receive Goods (Create GRN)</h2>
+    <form id="grnForm" class="mt-3">
+        <div class="mb-3">
+            <label class="form-label" for="grnNumber">GRN Number:</label>
+            <input type="text" id="grnNumber" name="grnNumber" class="form-control" required="required" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="poId">Purchase Order (Optional):</label>
+            <select id="poId" name="poId" class="form-select">
+                <option value="">Select PO Reference</option>
+                <option th:each="p : ${purchaseOrders}" th:value="${p.id}" th:text="${p.poNumber}"></option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="supplierId">Supplier:</label>
+            <select id="supplierId" name="supplierId" class="form-select" required="required">
+                <option value="">Select Supplier</option>
+                <option th:each="s : ${suppliers}" th:value="${s.id}" th:text="${s.name}"></option>
+            </select>
+        </div>
+
+        <h4>Items Received</h4>
+        <div id="itemsContainer">
+            <div class="row g-3 mb-2 item-row">
+                <div class="col-md-5">
+                    <select class="form-select product-select" name="productId" required="required">
+                        <option value="">Select Product</option>
+                        <option th:each="p : ${products}" th:value="${p.id}" th:text="${p.name}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" name="receivedQuantity" class="form-control qty-input" placeholder="Received Qty" min="1" required="required" />
+                </div>
+                <div class="col-md-3">
+                    <input type="number" name="unitPrice" step="0.01" class="form-control price-input" placeholder="Unit Cost Price" required="required" />
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Save GRN & Update Stock</button>
+        <a href="/grn" class="btn btn-secondary mt-3">Cancel</a>
+    </form>
+
+    <script>
+        document.getElementById('grnForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const grnNumber = document.getElementById('grnNumber').value;
+            const poId = document.getElementById('poId').value;
+            const supplierId = document.getElementById('supplierId').value;
+            
+            const items = [];
+            document.querySelectorAll('.item-row').forEach(row => {
+                items.push({
+                    product: { id: parseInt(row.querySelector('.product-select').value) },
+                    receivedQuantity: parseInt(row.querySelector('.qty-input').value),
+                    unitPrice: parseFloat(row.querySelector('.price-input').value)
+                });
+            });
+
+            const payload = {
+                grnNumber: grnNumber,
+                purchaseOrder: poId ? { id: parseInt(poId) } : null,
+                supplier: { id: parseInt(supplierId) },
+                items: items
+            };
+
+            const response = await fetch('/grn/api', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                alert('GRN Created & Product Stock Updated Successfully!');
+                window.location.href = '/grn';
+            } else {
+                alert('Failed to create GRN');
+            }
+        });
+    </script>
+</body>
+</html>
