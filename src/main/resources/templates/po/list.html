@@ -1,4 +1,3 @@
-<!-- ...existing code... -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -31,17 +30,16 @@
                 <td th:text="${po.id}">-</td>
                 <td th:text="${po.poNumber}">-</td>
                 <td th:text="${po.supplier != null ? po.supplier.name : 'N/A'}">-</td>
-                <td th:text="${po.orderDate != null} ? #dates.format(po.orderDate,'yyyy-MM-dd') : 'N/A'">-</td>
+                <td th:text="${po.orderDate != null} ? ${#temporals.format(po.orderDate, 'yyyy-MM-dd')} : 'N/A'">-</td>
                 <td>
                     <span th:if="${po.status == 'PENDING'}" class="badge bg-warning text-dark" th:text="${po.status}"></span>
                     <span th:if="${po.status == 'RECEIVED'}" class="badge bg-success" th:text="${po.status}"></span>
                     <span th:if="${po.status != 'PENDING' and po.status != 'RECEIVED'}" class="badge bg-secondary" th:text="${po.status}">-</span>
                 </td>
-                <td th:text="${po.totalAmount != null} ? #numbers.formatDecimal(po.totalAmount,2) : '0.00'">0.00</td>
+                <td th:text="${po.totalAmount != null} ? ${#numbers.formatDecimal(po.totalAmount, 1, 2)} : '0.00'">0.00</td>
             </tr>
         </tbody>
     </table>
     <a href="/" class="btn btn-secondary">Back to Dashboard</a>
 </body>
 </html>
-<!-- ...existing code... -->
