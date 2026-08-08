@@ -14,31 +14,29 @@ public class GRNItem {
 
     @ManyToOne
     @JoinColumn(name = "grn_id")
-    @JsonIgnore // 👈 Circular Dependency නවත්වන්න මේක දාලා තියෙනවා
+    @JsonIgnore
     private GRN grn;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(nullable = false)
+    @Column(name = "quantity_received", nullable = false)  // ← මෙය වෙනස් කරන්න
     private Integer quantity;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "quantity_accepted")
+    private Integer quantityAccepted;
+
+    @Column(name = "quantity_rejected")
+    private Integer quantityRejected;
+
+    @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
-    public GRNItem() {}
-
-    public GRNItem(Product product, Integer quantity, BigDecimal unitPrice) {
-        this.product = product;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
-    }
-
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -70,6 +68,22 @@ public class GRNItem {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
         calculateTotalPrice();
+    }
+
+    public Integer getQuantityAccepted() {
+        return quantityAccepted;
+    }
+
+    public void setQuantityAccepted(Integer quantityAccepted) {
+        this.quantityAccepted = quantityAccepted;
+    }
+
+    public Integer getQuantityRejected() {
+        return quantityRejected;
+    }
+
+    public void setQuantityRejected(Integer quantityRejected) {
+        this.quantityRejected = quantityRejected;
     }
 
     public BigDecimal getUnitPrice() {
