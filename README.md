@@ -133,7 +133,7 @@ mvn spring-boot:run
 | GET | /grn | View all GRNs (UI) |
 | GET | /grn/new | Create GRN form (UI) |
 
-###  Product Endpoints
+###  Product Endpoints (UI Routes)
 | Method | Path | Description |
 |---|---|---|
 | POST | `/api/products` | Create a product |
