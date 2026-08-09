@@ -3,6 +3,7 @@ package com.bci.productcrud.service;
 import com.bci.productcrud.model.Supplier;
 import com.bci.productcrud.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,13 +32,24 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public Supplier saveSupplier(Supplier supplier) {
         if (supplier.getId() == null) {
-            supplier.setId(null);
+            supplier.setActive(true);  // New supplier is active by default
         }
         return supplierRepository.save(supplier);
     }
 
     @Override
     public void deleteSupplier(Long id) {
-        supplierRepository.deleteById(id);
+        try {
+            supplierRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            // Supplier is referenced in other tables
+            // Soft delete - set active to false
+            Supplier supplier = supplierRepository.findById(id).orElse(null);
+            if (supplier != null) {
+                supplier.setActive(false);
+                supplierRepository.save(supplier);
+            }
+            throw new RuntimeException("Cannot delete supplier. It is referenced in other records. Supplier has been deactivated instead.");
+        }
     }
 }
