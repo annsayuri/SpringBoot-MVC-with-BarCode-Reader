@@ -5,48 +5,152 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Product CRUD</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .stat-card {
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-icon { font-size: 2.5rem; }
+        .stat-number { font-size: 2rem; font-weight: bold; }
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+        }
+        .card-link:hover .card {
+            border-color: #0d6efd;
+            box-shadow: 0 0 15px rgba(13, 110, 253, 0.2);
+        }
+    </style>
 </head>
 <body class="container mt-4">
-    <h1 class="text-center mb-4">📊 Dashboard</h1>
-    <p class="text-center text-muted">Welcome to Product CRUD Management System</p>
     
-    <div class="row mt-5">
-        <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4">📊 Product CRUD Dashboard</h1>
+        <p class="text-muted">Manage your products, suppliers, purchase orders and GRN</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card text-center bg-primary text-white">
                 <div class="card-body">
-                    <h3>📦</h3>
-                    <h5 class="card-title">Products</h5>
-                    <a href="/products" class="btn btn-primary">Manage</a>
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-number" th:text="${productCount != null ? productCount : 0}">0</div>
+                    <h6>Total Products</h6>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+        <div class="col-md-3">
+            <div class="card stat-card text-center bg-success text-white">
                 <div class="card-body">
-                    <h3>🏢</h3>
-                    <h5 class="card-title">Suppliers</h5>
-                    <a href="/suppliers" class="btn btn-primary">Manage</a>
+                    <div class="stat-icon">🏢</div>
+                    <div class="stat-number" th:text="${supplierCount != null ? supplierCount : 0}">0</div>
+                    <h6>Total Suppliers</h6>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+        <div class="col-md-3">
+            <div class="card stat-card text-center bg-warning text-white">
                 <div class="card-body">
-                    <h3>📋</h3>
-                    <h5 class="card-title">Purchase Orders</h5>
-                    <a href="/po" class="btn btn-primary">Manage</a>
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-number" th:text="${poCount != null ? poCount : 0}">0</div>
+                    <h6>Total Purchase Orders</h6>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card text-center shadow-sm">
+        <div class="col-md-3">
+            <div class="card stat-card text-center bg-info text-white">
                 <div class="card-body">
-                    <h3>📥</h3>
-                    <h5 class="card-title">GRN</h5>
-                    <a href="/grn" class="btn btn-primary">Manage</a>
+                    <div class="stat-icon">📥</div>
+                    <div class="stat-number" th:text="${grnCount != null ? grnCount : 0}">0</div>
+                    <h6>Total GRN</h6>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Navigation Cards -->
+    <div class="row mt-4">
+        <div class="col-md-3 mb-3">
+            <a href="/products" class="card-link">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h3>📦</h3>
+                        <h5 class="card-title">Products</h5>
+                        <p class="text-muted">Manage your product catalog</p>
+                        <span class="badge bg-primary" th:text="${productCount != null ? productCount : 0}">0</span>
+                        <span class="text-muted"> products</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="/suppliers" class="card-link">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h3>🏢</h3>
+                        <h5 class="card-title">Suppliers</h5>
+                        <p class="text-muted">Manage your suppliers</p>
+                        <span class="badge bg-success" th:text="${supplierCount != null ? supplierCount : 0}">0</span>
+                        <span class="text-muted"> suppliers</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="/po" class="card-link">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h3>📋</h3>
+                        <h5 class="card-title">Purchase Orders</h5>
+                        <p class="text-muted">Manage purchase orders</p>
+                        <span class="badge bg-warning" th:text="${poCount != null ? poCount : 0}">0</span>
+                        <span class="text-muted"> orders</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="/grn" class="card-link">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h3>📥</h3>
+                        <h5 class="card-title">GRN</h5>
+                        <p class="text-muted">Manage goods received</p>
+                        <span class="badge bg-info" th:text="${grnCount != null ? grnCount : 0}">0</span>
+                        <span class="text-muted"> GRNs</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">⚡ Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a href="/products/new" class="btn btn-outline-primary m-1">➕ Add Product</a>
+                    <a href="/suppliers/new" class="btn btn-outline-success m-1">➕ Add Supplier</a>
+                    <a href="/po/new" class="btn btn-outline-warning m-1">📋 Create PO</a>
+                    <a href="/grn/new" class="btn btn-outline-info m-1">📥 Create GRN</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-muted mt-5">
+        <small>Product CRUD Management System &copy; 2026</small>
+    </div>
+
 </body>
 </html>
