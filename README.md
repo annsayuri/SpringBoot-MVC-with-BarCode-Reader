@@ -74,23 +74,66 @@ $env:SUPABASE_DB_PASSWORD="<your-db-password>"
 
 Replace `<region>`, `<project-ref>`, and `<your-db-password>` with the values from your Supabase Connect dialog. These $env: variables only last for the current terminal session — you'll need to re-set them if you open a new window (or set them permanently via System Properties → Environment Variables).
 
-## 3. Run it
+## 3. Run the Application
 
 ```powershell
+mvn clean install
 mvn spring-boot:run
 ```
+## 4. Access the Application
 
-Once started, open your browser:
+| Feature | URL |
+|---------|-----|
+| **Dashboard** | `http://localhost:8084/` |
+| **Products** | `http://localhost:8084/products` |
+| **Suppliers** | `http://localhost:8084/suppliers` |
+| **Purchase Orders** | `http://localhost:8084/po` |
+| **GRN** | `http://localhost:8084/grn` |
+| **Create PO** | `http://localhost:8084/po/new` |
+| **Create GRN** | `http://localhost:8084/grn/new` |
+ 
 
- - Main Web App: `http://localhost:8081`
- - Suppliers Management: `http://localhost:8081/suppliers`
 
+## 5. API endpoints
 
-You'll see a page with a barcode-scan input, an add/edit form, and a product table. A USB barcode scanner behaves like a keyboard (types the code, then presses Enter), so clicking into the scan field and scanning "just works."
+#### Product Endpoints
 
-## 4. API endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /api/products | Create a new product |
+| GET | /api/products | Get all products |
+| GET | /api/products/{id} | Get product by ID |
+| GET | /api/products/barcode/{barcode} | Get product by barcode |
+| PUT | /api/products/{id} | Update product by ID |
+| DELETE | /api/products/{id} | Delete product by ID |
 
-### 📦 Product Endpoints
+#### Supplier Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /api/suppliers | Create a new supplier |
+| GET | /api/suppliers | Get all suppliers |
+| GET | /api/suppliers/{id} | Get supplier by ID |
+| PUT | /api/suppliers/{id} | Update supplier by ID |
+| DELETE | /api/suppliers/{id} | Delete supplier by ID |
+
+#### Purchase Order Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /po/api | Create a new purchase order |
+| GET | /po | View all purchase orders (UI) |
+| GET | /po/new | Create PO form (UI) |
+
+#### GRN Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /grn/api | Create GRN & auto-update stock |
+| GET | /grn | View all GRNs (UI) |
+| GET | /grn/new | Create GRN form (UI) |
+
+###  Product Endpoints
 | Method | Path | Description |
 |---|---|---|
 | POST | `/api/products` | Create a product |
@@ -100,7 +143,7 @@ You'll see a page with a barcode-scan input, an add/edit form, and a product tab
 | PUT | `/api/products/{id}` | Update product |
 | DELETE | `/api/products/{id}` | Delete product |
 
-### 🏬 Supplier Endpoints (UI Routes)
+###  Supplier Endpoints (UI Routes)
 | Method | Path | Description |
 |---|---|---|
 | GET | `/suppliers` | View all suppliers list |
@@ -109,40 +152,65 @@ You'll see a page with a barcode-scan input, an add/edit form, and a product tab
 | GET | `/suppliers/edit/{id}` | Render form to edit an existing supplier |
 | GET | `/suppliers/delete/{id}` | Delete a supplier by ID |
 
-## 5. Project structure
+## 6. Project structure
 
 ```
 src/main/java/com/bci/productcrud/
 ├── controller/
-│   ├── ProductController.java       -> Handles Product HTTP routes & API endpoints
-│   └── SupplierController.java      -> Handles Supplier CRUD routes and views
+│   ├── GRNController.java            # GRN UI controller
+│   ├── HomeController.java           # Dashboard controller
+│   ├── ProductController.java        # Product REST API
+│   ├── ProductWebController.java     # Product UI controller
+│   ├── PurchaseOrderController.java  # PO UI controller
+│   ├── SupplierController.java       # Supplier REST API
+│   └── SupplierWebController.java    # Supplier UI controller
 ├── exception/
 │   ├── DuplicateBarcodeException.java
-│   ├── GlobalExceptionHandler.java  -> Centralized error handling (@RestControllerAdvice)
+│   ├── GlobalExceptionHandler.java   # Centralized error handling
 │   └── ProductNotFoundException.java
 ├── model/
-│   ├── Product.java                 -> Product JPA Entity (Relationship with Supplier)
-│   └── Supplier.java                -> Supplier JPA Entity
+│   ├── GRN.java                      # GRN Entity
+│   ├── GRNItem.java                  # GRN Item Entity
+│   ├── Product.java                  # Product Entity
+│   ├── PurchaseOrder.java            # Purchase Order Entity
+│   ├── PurchaseOrderItem.java        # PO Item Entity
+│   └── Supplier.java                 # Supplier Entity
 ├── repository/
-│   ├── ProductRepository.java       -> JpaRepository interface for Product
-│   └── SupplierRepository.java      -> JpaRepository interface for Supplier
+│   ├── GRNRepository.java
+│   ├── ProductRepository.java
+│   ├── PurchaseOrderRepository.java
+│   └── SupplierRepository.java
 ├── service/
-│   ├── ProductService.java          -> Product service interface
-│   ├── ProductServiceImpl.java      -> Product business logic implementation
-│   ├── SupplierService.java         -> Supplier service interface
-│   └── SupplierServiceImpl.java     -> Supplier business logic implementation
-└── ProductCrudApplication.java      -> Spring Boot main entry point
+│   ├── GRNService.java
+│   ├── GRNServiceImpl.java
+│   ├── ProductService.java
+│   ├── ProductServiceImpl.java
+│   ├── PurchaseOrderService.java
+│   ├── PurchaseOrderServiceImpl.java
+│   ├── SupplierService.java
+│   └── SupplierServiceImpl.java
+└── ProductCrudApplication.java
 
 src/main/resources/
-├── application.properties           -> Configuration (DB properties, port 8081)
-├── static/                          -> Frontend assets
-│   ├── app.js                       -> Barcode scanner & JS logic
-│   ├── index.html                   -> Single-page web UI
-│   └── style.css                    -> CSS styling
-└── templates/                       -> Thymeleaf UI templates
-    └── suppliers/
-        ├── form.html                -> Add/Edit Supplier form
-        └── list.html                -> Supplier list view          
+├── application.properties            # Configuration (port 8084)
+├── static/
+│   ├── app.js                        # Frontend JavaScript
+│   ├── index.html                    # Static homepage
+│   └── style.css                     # CSS styles
+└── templates/
+    ├── grn/
+    │   ├── form.html                 # Create/Edit GRN
+    │   └── list.html                 # GRN List
+    ├── po/
+    │   ├── form.html                 # Create/Edit PO
+    │   └── list.html                 # PO List
+    ├── product/
+    │   ├── form.html                 # Create/Edit Product
+    │   └── list.html                 # Product List
+    ├── supplier/
+    │   ├── form.html                 # Create/Edit Supplier
+    │   └── list.html                 # Supplier List
+    └── index.html                    # Dashboard      
 ```
 
 Request flow for a barcode scan: `app.js` → `GET /api/products/barcode/{code}` → `ProductController` → `ProductService` → `ProductRepository` → Supabase, and the `Product` JSON flows back the same path in reverse.
