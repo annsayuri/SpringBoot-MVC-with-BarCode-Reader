@@ -14,50 +14,39 @@ public class ProductWebController {
     @Autowired
     private ProductService productService;
 
-    // List all products (HTML)
     @GetMapping
     public String listProducts(Model model) {
         model.addAttribute("products", productService.findAll());
-        return "product/list";
+        return "product/list";  // ← "product/list" විය යුතුයි
     }
 
-    // Show create form (HTML)
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("product", new Product());
-        return "product/form";
+        return "product/form";  // ← "product/form" විය යුතුයි
     }
 
-    // Save product (redirect)
     @PostMapping
     public String createProduct(@ModelAttribute Product product) {
         productService.create(product);
         return "redirect:/products";
     }
 
-    // Show edit form (HTML)
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         model.addAttribute("product", productService.findById(id));
-        return "product/form";
+        return "product/form";  // ← "product/form" විය යුතුයි
     }
 
-    // Update product (redirect)
     @PostMapping("/update/{id}")
     public String updateProduct(@PathVariable Long id, @ModelAttribute Product product) {
         productService.update(id, product);
         return "redirect:/products";
     }
 
-    // Delete product (redirect)
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable Long id) {
-        try {
-            productService.delete(id);
-        } catch (Exception e) {
-            // Product might be referenced in PO items
-            System.out.println("Cannot delete product: " + e.getMessage());
-        }
+        productService.delete(id);
         return "redirect:/products";
     }
 }
