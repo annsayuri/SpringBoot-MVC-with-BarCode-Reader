@@ -17,13 +17,13 @@ public class SupplierWebController {
     @GetMapping
     public String listSuppliers(Model model) {
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
-        return "supplier/list";
+        return "supplier/list";  // ← මෙය "supplier/list" විය යුතුයි
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("supplier", new Supplier());
-        return "supplier/form";
+        return "supplier/form";  // ← මෙය "supplier/form" විය යුතුයි
     }
 
     @PostMapping
@@ -35,7 +35,7 @@ public class SupplierWebController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         model.addAttribute("supplier", supplierService.getSupplierById(id));
-        return "supplier/form";
+        return "supplier/form";  // ← මෙය "supplier/form" විය යුතුයි
     }
 
     @PostMapping("/update/{id}")
