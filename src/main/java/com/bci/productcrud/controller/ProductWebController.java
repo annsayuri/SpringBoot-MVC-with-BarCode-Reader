@@ -23,7 +23,7 @@ public class ProductWebController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("product", new Product());
-        return "product/form";  // ← "product/form" විය යුතුයි
+        return "product/form"; 
     }
 
     @PostMapping

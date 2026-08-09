@@ -1,10 +1,6 @@
 package com.bci.productcrud.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -23,8 +19,10 @@ public class Supplier {
     private Long id;
 
     @NotBlank
+    @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(name = "contact_person")
     private String contactPerson;
 
     @Email
@@ -33,4 +31,17 @@ public class Supplier {
     private String phone;
 
     private String address;
+
+    @Column(nullable = false)
+    private Boolean active = true;  // 👈 මෙය ADD කරන්න
+
+    // Constructor with active default
+    public Supplier(String name, String contactPerson, String email, String phone, String address) {
+        this.name = name;
+        this.contactPerson = contactPerson;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+        this.active = true;
+    }
 }

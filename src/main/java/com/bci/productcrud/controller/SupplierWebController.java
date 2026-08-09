@@ -17,25 +17,28 @@ public class SupplierWebController {
     @GetMapping
     public String listSuppliers(Model model) {
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
-        return "supplier/list";  // ← මෙය "supplier/list" විය යුතුයි
+        return "supplier/list";
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("supplier", new Supplier());
-        return "supplier/form";  // ← මෙය "supplier/form" විය යුතුයි
+        return "supplier/form";
     }
 
     @PostMapping
     public String createSupplier(@ModelAttribute Supplier supplier) {
+        supplier.setActive(true);  // New supplier is active by default
         supplierService.saveSupplier(supplier);
         return "redirect:/suppliers";
     }
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        model.addAttribute("supplier", supplierService.getSupplierById(id));
-        return "supplier/form";  // ← මෙය "supplier/form" විය යුතුයි
+        Supplier supplier = supplierService.getSupplierById(id)
+                .orElseThrow(() -> new RuntimeException("Supplier not found"));
+        model.addAttribute("supplier", supplier);
+        return "supplier/form";
     }
 
     @PostMapping("/update/{id}")
@@ -47,7 +50,11 @@ public class SupplierWebController {
 
     @GetMapping("/delete/{id}")
     public String deleteSupplier(@PathVariable Long id) {
-        supplierService.deleteSupplier(id);
+        try {
+            supplierService.deleteSupplier(id);
+        } catch (Exception e) {
+            System.out.println("Error deleting supplier: " + e.getMessage());
+        }
         return "redirect:/suppliers";
     }
 }

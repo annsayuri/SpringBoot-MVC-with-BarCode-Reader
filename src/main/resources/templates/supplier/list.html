@@ -20,12 +20,13 @@
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Address</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             <tr th:if="${#lists.isEmpty(suppliers)}">
-                <td colspan="7" class="text-center">No Suppliers found.</td>
+                <td colspan="8" class="text-center">No Suppliers found.</td>
             </tr>
             <tr th:each="supplier : ${suppliers}">
                 <td th:text="${supplier.id}">-</td>
@@ -35,8 +36,13 @@
                 <td th:text="${supplier.phone}">-</td>
                 <td th:text="${supplier.address}">-</td>
                 <td>
-                    <a th:href="@{/suppliers/edit/{id}(id=${supplier.id})}" class="btn btn-sm btn-warning">Edit</a>
-                    <a th:href="@{/suppliers/delete/{id}(id=${supplier.id})}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                    <span th:if="${supplier.active}" class="badge bg-success">Active</span>
+                    <span th:if="${!supplier.active}" class="badge bg-danger">Inactive</span>
+                </td>
+                <td>
+                    <a th:if="${supplier.active}" th:href="@{/suppliers/edit/{id}(id=${supplier.id})}" class="btn btn-sm btn-warning">Edit</a>
+                    <a th:if="${supplier.active}" th:href="@{/suppliers/delete/{id}(id=${supplier.id})}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                    <span th:if="${!supplier.active}" class="text-muted">Deactivated</span>
                 </td>
             </tr>
         </tbody>
