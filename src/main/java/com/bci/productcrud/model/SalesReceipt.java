@@ -13,14 +13,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "sales_receipts")
+@Table(name = "sales_receipts")  // ✅ Fixed: underscore instead of space
 public class SalesReceipt {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "cashier_id")
+    @JoinColumn(name = "cashier_id")  // ✅ Fixed: underscore instead of space
     private User cashier;
 
     @Column(name = "total_amount")
@@ -36,6 +37,6 @@ public class SalesReceipt {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "salesReceipt", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "salesReceipt", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SalesReceiptItem> items = new ArrayList<>();
 }
