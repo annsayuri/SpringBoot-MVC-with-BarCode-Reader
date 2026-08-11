@@ -12,10 +12,14 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "payments")
 public class Payment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "invoice_id")
+    private SalesReceipt salesReceipt;  
     @Column(name = "payment_method")
     private String paymentMethod;  // CASH, CARD, BANK
 
