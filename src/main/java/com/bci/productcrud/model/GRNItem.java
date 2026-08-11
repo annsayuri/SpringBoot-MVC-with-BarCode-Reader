@@ -13,7 +13,7 @@ public class GRNItem {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "grn_id")
+    @JoinColumn(name = "grn_id")  // Matches ER Diagram
     @JsonIgnore
     private GRN grn;
 
@@ -21,7 +21,7 @@ public class GRNItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(name = "quantity_received", nullable = false)  // ← මෙය වෙනස් කරන්න
+    @Column(name = "quantity_received", nullable = false)
     private Integer quantity;
 
     @Column(name = "quantity_accepted")
@@ -37,71 +37,29 @@ public class GRNItem {
     private BigDecimal totalPrice;
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public GRN getGrn() { return grn; }
+    public void setGrn(GRN grn) { this.grn = grn; }
 
-    public GRN getGrn() {
-        return grn;
-    }
+    public Product getProduct() { return product; }
+    public void setProduct(Product product) { this.product = product; }
 
-    public void setGrn(GRN grn) {
-        this.grn = grn;
-    }
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; calculateTotalPrice(); }
 
-    public Product getProduct() {
-        return product;
-    }
+    public Integer getQuantityAccepted() { return quantityAccepted; }
+    public void setQuantityAccepted(Integer quantityAccepted) { this.quantityAccepted = quantityAccepted; }
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
+    public Integer getQuantityRejected() { return quantityRejected; }
+    public void setQuantityRejected(Integer quantityRejected) { this.quantityRejected = quantityRejected; }
 
-    public Integer getQuantity() {
-        return quantity;
-    }
+    public BigDecimal getUnitPrice() { return unitPrice; }
+    public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; calculateTotalPrice(); }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-        calculateTotalPrice();
-    }
-
-    public Integer getQuantityAccepted() {
-        return quantityAccepted;
-    }
-
-    public void setQuantityAccepted(Integer quantityAccepted) {
-        this.quantityAccepted = quantityAccepted;
-    }
-
-    public Integer getQuantityRejected() {
-        return quantityRejected;
-    }
-
-    public void setQuantityRejected(Integer quantityRejected) {
-        this.quantityRejected = quantityRejected;
-    }
-
-    public BigDecimal getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(BigDecimal unitPrice) {
-        this.unitPrice = unitPrice;
-        calculateTotalPrice();
-    }
-
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
-    }
+    public BigDecimal getTotalPrice() { return totalPrice; }
+    public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
 
     private void calculateTotalPrice() {
         if (this.quantity != null && this.unitPrice != null) {
