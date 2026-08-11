@@ -44,7 +44,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             for (PurchaseOrderItem item : purchaseOrder.getItems()) {
                 item.setPurchaseOrder(purchaseOrder);
                 double itemTotal = item.getQuantity() * item.getUnitPrice();
-                item.setTotalPrice(itemTotal);
+                item.setSubtotal(itemTotal);
                 totalAmount += itemTotal;
             }
         }

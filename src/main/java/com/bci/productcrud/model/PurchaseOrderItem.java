@@ -13,26 +13,16 @@ public class PurchaseOrderItem {
 
     private Integer quantity;
     private Double unitPrice;
-    private Double totalPrice;
+    private Double subtotal;  // Changed from totalPrice to subtotal (ER Diagram)
 
     @ManyToOne
-    @JoinColumn(name = "purchase_order_id")
+    @JoinColumn(name = "po_id")  // Changed from purchase_order_id to po_id (ER Diagram)
     @JsonIgnore
     private PurchaseOrder purchaseOrder;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-
-    public PurchaseOrderItem() {
-    }
-
-    public PurchaseOrderItem(Integer quantity, Double unitPrice, Double totalPrice, Product product) {
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.totalPrice = totalPrice;
-        this.product = product;
-    }
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -44,8 +34,8 @@ public class PurchaseOrderItem {
     public Double getUnitPrice() { return unitPrice; }
     public void setUnitPrice(Double unitPrice) { this.unitPrice = unitPrice; }
 
-    public Double getTotalPrice() { return totalPrice; }
-    public void setTotalPrice(Double totalPrice) { this.totalPrice = totalPrice; }
+    public Double getSubtotal() { return subtotal; }
+    public void setSubtotal(Double subtotal) { this.subtotal = subtotal; }
 
     public PurchaseOrder getPurchaseOrder() { return purchaseOrder; }
     public void setPurchaseOrder(PurchaseOrder purchaseOrder) { this.purchaseOrder = purchaseOrder; }
