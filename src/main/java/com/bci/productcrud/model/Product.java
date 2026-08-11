@@ -1,16 +1,13 @@
 package com.bci.productcrud.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -31,6 +28,18 @@ public class Product {
 
     private String description;
 
+    // ========== NEW FIELDS (ER Diagram) ==========
+    private String category;
+    private String brand;
+    private String size;
+    private String color;
+
+    @Column(name = "purchase_price")
+    private BigDecimal purchasePrice;
+
+    @Column(name = "selling_price")
+    private BigDecimal sellingPrice;
+
     @NotNull
     @Min(0)
     private Double price;
@@ -38,4 +47,6 @@ public class Product {
     @NotNull
     @Min(0)
     private Integer quantity;
+
+    private String status;  // ACTIVE, INACTIVE, DISCONTINUED
 }
