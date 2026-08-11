@@ -32,10 +32,15 @@ public class Supplier {
 
     private String address;
 
-    @Column(nullable = false)
-    private Boolean active = true;  // 👈 මෙය ADD කරන්න
+    // ========== NEW FIELDS (ER Diagram) ==========
+    @Column(name = "bank_details")
+    private String bankDetails;
 
-    // Constructor with active default
+    private String status;  // ACTIVE, INACTIVE
+
+    @Column(nullable = false)
+    private Boolean active = true;
+
     public Supplier(String name, String contactPerson, String email, String phone, String address) {
         this.name = name;
         this.contactPerson = contactPerson;
@@ -43,5 +48,6 @@ public class Supplier {
         this.phone = phone;
         this.address = address;
         this.active = true;
+        this.status = "ACTIVE";
     }
 }
