@@ -18,9 +18,15 @@ public class GRN {
 
     private LocalDate receivedDate;
     private Double totalAmount;
+    private String status;  // RECEIVED, PARTIAL, PENDING
+
+    // ========== NEW RELATIONSHIP (ER Diagram) ==========
+    @ManyToOne
+    @JoinColumn(name = "received_by")
+    private User receivedBy;
 
     @ManyToOne
-    @JoinColumn(name = "purchase_order_id")
+    @JoinColumn(name = "po_id")  // Changed from purchase_order_id to po_id (ER Diagram)
     private PurchaseOrder purchaseOrder;
 
     @ManyToOne
@@ -29,17 +35,6 @@ public class GRN {
 
     @OneToMany(mappedBy = "grn", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GRNItem> items = new ArrayList<>();
-
-    public GRN() {
-    }
-
-    public GRN(String grnNumber, LocalDate receivedDate, Double totalAmount, PurchaseOrder purchaseOrder, Supplier supplier) {
-        this.grnNumber = grnNumber;
-        this.receivedDate = receivedDate;
-        this.totalAmount = totalAmount;
-        this.purchaseOrder = purchaseOrder;
-        this.supplier = supplier;
-    }
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -53,6 +48,12 @@ public class GRN {
 
     public Double getTotalAmount() { return totalAmount; }
     public void setTotalAmount(Double totalAmount) { this.totalAmount = totalAmount; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public User getReceivedBy() { return receivedBy; }
+    public void setReceivedBy(User receivedBy) { this.receivedBy = receivedBy; }
 
     public PurchaseOrder getPurchaseOrder() { return purchaseOrder; }
     public void setPurchaseOrder(PurchaseOrder purchaseOrder) { this.purchaseOrder = purchaseOrder; }
