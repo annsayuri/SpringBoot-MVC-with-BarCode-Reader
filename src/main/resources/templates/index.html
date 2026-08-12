@@ -24,6 +24,12 @@
             border-color: #0d6efd;
             box-shadow: 0 0 15px rgba(13, 110, 253, 0.2);
         }
+        .quick-action-btn {
+            transition: all 0.3s ease;
+        }
+        .quick-action-btn:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body class="container mt-4">
@@ -82,7 +88,7 @@
                     <div class="card-body">
                         <h3>📦</h3>
                         <h5 class="card-title">Products</h5>
-                        <p class="text-muted">Manage your product catalog</p>
+                        <p class="text-muted" th:text="${productCount != null ? productCount + ' products available' : 'Manage your product catalog'}">Manage your product catalog</p>
                         <span class="badge bg-primary" th:text="${productCount != null ? productCount : 0}">0</span>
                         <span class="text-muted"> products</span>
                     </div>
@@ -95,7 +101,7 @@
                     <div class="card-body">
                         <h3>🏢</h3>
                         <h5 class="card-title">Suppliers</h5>
-                        <p class="text-muted">Manage your suppliers</p>
+                        <p class="text-muted" th:text="${supplierCount != null ? supplierCount + ' suppliers available' : 'Manage your suppliers'}">Manage your suppliers</p>
                         <span class="badge bg-success" th:text="${supplierCount != null ? supplierCount : 0}">0</span>
                         <span class="text-muted"> suppliers</span>
                     </div>
@@ -108,7 +114,7 @@
                     <div class="card-body">
                         <h3>📋</h3>
                         <h5 class="card-title">Purchase Orders</h5>
-                        <p class="text-muted">Manage purchase orders</p>
+                        <p class="text-muted" th:text="${poCount != null ? poCount + ' orders available' : 'Manage purchase orders'}">Manage purchase orders</p>
                         <span class="badge bg-warning" th:text="${poCount != null ? poCount : 0}">0</span>
                         <span class="text-muted"> orders</span>
                     </div>
@@ -121,7 +127,7 @@
                     <div class="card-body">
                         <h3>📥</h3>
                         <h5 class="card-title">GRN</h5>
-                        <p class="text-muted">Manage goods received</p>
+                        <p class="text-muted" th:text="${grnCount != null ? grnCount + ' GRNs available' : 'Manage goods received'}">Manage goods received</p>
                         <span class="badge bg-info" th:text="${grnCount != null ? grnCount : 0}">0</span>
                         <span class="text-muted"> GRNs</span>
                     </div>
@@ -138,10 +144,60 @@
                     <h5 class="mb-0">⚡ Quick Actions</h5>
                 </div>
                 <div class="card-body">
-                    <a href="/products/new" class="btn btn-outline-primary m-1">➕ Add Product</a>
-                    <a href="/suppliers/new" class="btn btn-outline-success m-1">➕ Add Supplier</a>
-                    <a href="/po/new" class="btn btn-outline-warning m-1">📋 Create PO</a>
-                    <a href="/grn/new" class="btn btn-outline-info m-1">📥 Create GRN</a>
+                    <a href="/products/new" class="btn btn-outline-primary m-1 quick-action-btn">➕ Add Product</a>
+                    <a href="/suppliers/new" class="btn btn-outline-success m-1 quick-action-btn">➕ Add Supplier</a>
+                    <a href="/po/new" class="btn btn-outline-warning m-1 quick-action-btn">📋 Create PO</a>
+                    <a href="/grn/new" class="btn btn-outline-info m-1 quick-action-btn">📥 Create GRN</a>
+                    <a href="/products" class="btn btn-outline-secondary m-1 quick-action-btn">📦 View Products</a>
+                    <a href="/suppliers" class="btn btn-outline-secondary m-1 quick-action-btn">🏢 View Suppliers</a>
+                    <a href="/po" class="btn btn-outline-secondary m-1 quick-action-btn">📋 View POs</a>
+                    <a href="/grn" class="btn btn-outline-secondary m-1 quick-action-btn">📥 View GRNs</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity / Quick Stats -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">📈 Quick Stats</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Products
+                            <span class="badge bg-primary rounded-pill" th:text="${productCount != null ? productCount : 0}">0</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Suppliers
+                            <span class="badge bg-success rounded-pill" th:text="${supplierCount != null ? supplierCount : 0}">0</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Purchase Orders
+                            <span class="badge bg-warning rounded-pill" th:text="${poCount != null ? poCount : 0}">0</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total GRN
+                            <span class="badge bg-info rounded-pill" th:text="${grnCount != null ? grnCount : 0}">0</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">🚀 Getting Started</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-column gap-2">
+                        <a href="/products/new" class="btn btn-outline-primary btn-sm">1. Add your first Product</a>
+                        <a href="/suppliers/new" class="btn btn-outline-success btn-sm">2. Add your first Supplier</a>
+                        <a href="/po/new" class="btn btn-outline-warning btn-sm">3. Create your first Purchase Order</a>
+                        <a href="/grn/new" class="btn btn-outline-info btn-sm">4. Create your first GRN</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -152,5 +208,7 @@
         <small>Product CRUD Management System &copy; 2026</small>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
